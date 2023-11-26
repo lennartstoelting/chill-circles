@@ -1,4 +1,5 @@
 const gradients = [
+    /* https://colordesigner.io/gradient-generator */
     [
         "#fafa6e",
         "#e1f470",
@@ -45,23 +46,16 @@ const gradients = [
         "#FDDFD5",
         "#FEDCD1",
     ],
-]; /* https://colordesigner.io/gradient-generator */
+];
 const colors = gradients[0];
-const audioURL = "https://ia800106.us.archive.org/13/items/24-piano-keys/key"; // beginning of the piano notes URL
+const audioURL = "https://ia800106.us.archive.org/13/items/24-piano-keys/"; // beginning of the piano notes URL
 const velocityEquation = (index) => (2 * Math.PI * (60 - index)) / 900; // 900s = 15min, until all circles realign
 let startTime = new Date().getTime();
 
 const paper = document.querySelector("#paper");
 pen = paper.getContext("2d");
-let fullScreen = false;
 paper.addEventListener("click", () => {
-    if (fullScreen) {
-        fullScreenHelper.closeFullscreen();
-        fullScreen = false;
-    } else {
-        fullScreenHelper.openFullscreen();
-        fullScreen = true;
-    }
+    toggleFullscreen();
 });
 
 const arcs = colors.map((color, index) => {
@@ -69,6 +63,7 @@ const arcs = colors.map((color, index) => {
         color: color,
         audio: new Audio(
             audioURL +
+                "key" +
                 Math.min(index + 1, 24)
                     .toString()
                     .padStart(2, "0") +
@@ -81,8 +76,6 @@ const arcs = colors.map((color, index) => {
 const draw = () => {
     const currentTime = new Date().getTime();
     const elapsedTime = (currentTime - startTime) / 1000;
-
-    // console.log(elapsedTime);
 
     /* update paper size */
     paper.width = paper.clientWidth;
@@ -135,19 +128,9 @@ const draw = () => {
 draw();
 
 /* minor helper functions */
-const fullScreenHelper = {
-    openFullscreen: () => {
-        if (paper.requestFullscreen) {
-            paper.requestFullscreen();
-        } else if (paper.webkitRequestFullscreen) {
-            /* Safari */
-            paper.webkitRequestFullscreen();
-        } else if (paper.msRequestFullscreen) {
-            /* IE11 */
-            paper.msRequestFullscreen();
-        }
-    },
-    closeFullscreen: () => {
+let fullScreen = false;
+const toggleFullscreen = () => {
+    if (fullScreen) {
         if (document.exitFullscreen) {
             document.exitFullscreen();
         } else if (document.webkitExitFullscreen) {
@@ -157,5 +140,17 @@ const fullScreenHelper = {
             /* IE11 */
             document.msExitFullscreen();
         }
-    },
+        fullScreen = false;
+    } else {
+        if (paper.requestFullscreen) {
+            paper.requestFullscreen();
+        } else if (paper.webkitRequestFullscreen) {
+            /* Safari */
+            paper.webkitRequestFullscreen();
+        } else if (paper.msRequestFullscreen) {
+            /* IE11 */
+            paper.msRequestFullscreen();
+        }
+        fullScreen = true;
+    }
 };
