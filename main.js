@@ -1,70 +1,82 @@
-const arcs = [
-    "#D0E7F5",
-    "#D9E7F4",
-    "#D6E3F4",
-    "#BCDFF5",
-    "#B7D9F4",
-    "#C3D4F0",
-    "#9DC1F3",
-    "#9AA9F4",
-    "#8D83EF",
-    "#AE69F0",
-    "#D46FF1",
-    "#DB5AE7",
-    "#D911DA",
-    "#D601CB",
-    "#E713BF",
-    "#F24CAE",
-    "#FB79AB",
-    "#FFB6C1",
-    "#FED2CF",
-    "#FDDFD5",
-    "#FEDCD1",
-];
-
-/* https://colordesigner.io/gradient-generator */
-const arcs2 = [
-    "#fafa6e",
-    "#e1f470",
-    "#c9ee73",
-    "#b2e777",
-    "#9cdf7c",
-    "#86d780",
-    "#72cf85",
-    "#5ec688",
-    "#4abd8c",
-    "#37b38e",
-    "#23aa8f",
-    "#0ba08f",
-    "#00968e",
-    "#008c8b",
-    "#008288",
-    "#007882",
-    "#106e7c",
-    "#1b6474",
-    "#225b6c",
-    "#275162",
-    "#2a4858",
-];
-
-// var audio = new Audio("https://ia800106.us.archive.org/13/items/24-piano-keys/key01.mp3");
-// audio.play();
-
-const initAudio = () => {
-    const array = [];
-    for (let i = 1; i <= arcs.length; i++) {
-        array.push(new Audio("https://ia800106.us.archive.org/13/items/24-piano-keys/key" + i.toString().padStart(2, "0") + ".mp3"));
-    }
-    return array;
-};
-
-const audio = initAudio();
+const gradients = [
+    [
+        "#fafa6e",
+        "#e1f470",
+        "#c9ee73",
+        "#b2e777",
+        "#9cdf7c",
+        "#86d780",
+        "#72cf85",
+        "#5ec688",
+        "#4abd8c",
+        "#37b38e",
+        "#23aa8f",
+        "#0ba08f",
+        "#00968e",
+        "#008c8b",
+        "#008288",
+        "#007882",
+        "#106e7c",
+        "#1b6474",
+        "#225b6c",
+        "#275162",
+        "#2a4858",
+    ],
+    [
+        "#D0E7F5",
+        "#D9E7F4",
+        "#D6E3F4",
+        "#BCDFF5",
+        "#B7D9F4",
+        "#C3D4F0",
+        "#9DC1F3",
+        "#9AA9F4",
+        "#8D83EF",
+        "#AE69F0",
+        "#D46FF1",
+        "#DB5AE7",
+        "#D911DA",
+        "#D601CB",
+        "#E713BF",
+        "#F24CAE",
+        "#FB79AB",
+        "#FFB6C1",
+        "#FED2CF",
+        "#FDDFD5",
+        "#FEDCD1",
+    ],
+]; /* https://colordesigner.io/gradient-generator */
+const colors = gradients[0];
+const audioURL = "https://ia800106.us.archive.org/13/items/24-piano-keys/key"; // beginning of the piano notes URL
+const velocityEquation = (index) => (2 * Math.PI * (60 - index)) / 900; // 900s = 15min, until all circles realign
+let startTime = new Date().getTime();
 
 const paper = document.querySelector("#paper");
 pen = paper.getContext("2d");
-pen.lineCap = "round";
+let fullScreen = false;
+paper.addEventListener("click", () => {
+    if (fullScreen) {
+        fullScreenHelper.closeFullscreen();
+        fullScreen = false;
+    } else {
+        fullScreenHelper.openFullscreen();
+        fullScreen = true;
+    }
+});
 
-let startTime = new Date().getTime();
+const arcs = colors.map((color, index) => {
+    return {
+        color: color,
+        audio: new Audio(
+            audioURL +
+                Math.min(index + 1, 24)
+                    .toString()
+                    .padStart(2, "0") +
+                ".mp3"
+        ), //audio.play() zum Abspielen
+        velocity: velocityEquation(index),
+    };
+});
 
 const draw = () => {
     const currentTime = new Date().getTime();
@@ -83,7 +95,7 @@ const draw = () => {
     const length = end.x - start.x;
     const initialArcRadius = length * 0.05;
     const spacing = (length / 2 - initialArcRadius) / arcs.length;
-    maxAngle = 2 * Math.PI;
+    const maxAngle = 2 * Math.PI;
 
     pen.strokeStyle = "white";
     pen.lineWidth = 6;
@@ -94,19 +106,17 @@ const draw = () => {
     pen.lineTo(end.x, end.y);
     pen.stroke();
 
-    arcs2.forEach((arc, index) => {
+    arcs.forEach((arc, index) => {
         const arcRadius = initialArcRadius + index * spacing;
 
         /** arc */
         pen.beginPath();
-        pen.strokeStyle = arc;
+        pen.strokeStyle = arc.color;
         pen.arc(center.x, center.y, arcRadius, Math.PI, Math.PI * 2);
         pen.stroke();
 
         /** circle */
-        const numberOfLoops = 50 - index;
-        const velocity = (maxAngle * numberOfLoops) / 900; // 900s = 15min, until all circles realign
-        const distance = Math.PI + elapsedTime * velocity;
+        const distance = Math.PI + elapsedTime * arc.velocity;
         modDistance = distance % maxAngle;
         adjustedDistance = modDistance >= Math.PI ? modDistance : maxAngle - modDistance;
 
@@ -123,3 +133,29 @@ const draw = () => {
 };
 
 draw();
+
+/* minor helper functions */
+const fullScreenHelper = {
+    openFullscreen: () => {
+        if (paper.requestFullscreen) {
+            paper.requestFullscreen();
+        } else if (paper.webkitRequestFullscreen) {
+            /* Safari */
+            paper.webkitRequestFullscreen();
+        } else if (paper.msRequestFullscreen) {
+            /* IE11 */
+            paper.msRequestFullscreen();
+        }
+    },
+    closeFullscreen: () => {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            /* Safari */
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            /* IE11 */
+            document.msExitFullscreen();
+        }
+    },
+};
