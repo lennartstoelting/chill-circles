@@ -1,3 +1,4 @@
+/* global variables */
 const gradients = [
     /* https://colordesigner.io/gradient-generator */
     [
@@ -58,6 +59,7 @@ paper.addEventListener("click", () => {
     toggleFullscreen();
 });
 
+/* array of arcs with their color, key and velocity */
 const arcs = colors.map((color, index) => {
     return {
         color: color,
@@ -73,6 +75,7 @@ const arcs = colors.map((color, index) => {
     };
 });
 
+/* main looping draw function */
 const draw = () => {
     const currentTime = new Date().getTime();
     const elapsedTime = (currentTime - startTime) / 1000;
@@ -154,3 +157,8 @@ const toggleFullscreen = () => {
         fullScreen = true;
     }
 };
+
+/** next steps
+ * 1. add audio at correct time
+ * 2. maybe change keys or scale of notes (https://www.musictheory.net/lessons/21)
+ */
