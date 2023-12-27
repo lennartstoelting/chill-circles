@@ -1,5 +1,15 @@
+/**
+ * TODO:
+ *
+ * - switch gradients with keyboard press (maybe f for "Farbe")
+ * - add more gradients
+ * - find more beautiful sound, piano sounds a little harsh
+ * - the baseline is still very white and can clash with the tranquility of the rest of the picture
+ */
+
 const gradientColorSampleRGB = [
     /* https://colordesigner.io/gradient-generator */
+    // green-yellow-turquoise gradient
     [
         [250, 250, 110],
         [240, 241, 109],
@@ -23,6 +33,54 @@ const gradientColorSampleRGB = [
         [52, 81, 89],
         [42, 72, 88],
     ],
+    // sunset gradient
+    [
+        [245, 98, 25],
+        [233, 97, 29],
+        [222, 95, 33],
+        [210, 94, 37],
+        [198, 93, 41],
+        [187, 91, 45],
+        [175, 90, 49],
+        [163, 89, 53],
+        [151, 87, 57],
+        [140, 86, 61],
+        [128, 85, 66],
+        [116, 83, 70],
+        [105, 82, 74],
+        [93, 80, 78],
+        [81, 79, 82],
+        [70, 78, 86],
+        [58, 76, 90],
+        [46, 75, 94],
+        [34, 74, 98],
+        [23, 72, 102],
+        [11, 71, 106],
+    ],
+    // sweet morning gradient
+    [
+        [255, 97, 110],
+        [255, 102, 110],
+        [255, 107, 110],
+        [255, 112, 110],
+        [255, 117, 110],
+        [255, 122, 111],
+        [255, 126, 111],
+        [255, 131, 111],
+        [255, 136, 111],
+        [255, 141, 111],
+        [255, 146, 111],
+        [255, 151, 111],
+        [255, 156, 111],
+        [255, 161, 111],
+        [255, 166, 111],
+        [255, 171, 112],
+        [255, 175, 112],
+        [255, 180, 112],
+        [255, 185, 112],
+        [255, 190, 112],
+        [255, 195, 112],
+    ],
 ];
 
 const paper = document.querySelector("#paper");
@@ -33,10 +91,10 @@ paper.onclick = () => {
 
 let startTime = new Date().getTime();
 
-const colors = gradientColorSampleRGB[0];
+const colors = gradientColorSampleRGB[2];
 const white = [255, 255, 255];
 const whiteIntensity = 20; // 0 (original color) to 20 (white)
-const fadingFrames = 20; // 1 (ein Frame weiß) to e.g. 40 (40 Frames fade oud) or more
+const fadingFrames = 50; // 1 (ein Frame weiß) to e.g. 40 (40 Frames fade oud) or more
 
 const arcs = colors.map((color, index) => {
     return {
@@ -75,15 +133,11 @@ const draw = () => {
     /* line at the base coordinates */
     const start = { x: paper.width * 0.1, y: paper.height * 0.9 };
     const end = { x: paper.width * 0.9, y: paper.height * 0.9 };
-    const center = { x: paper.width * 0.5, y: paper.height * 0.9 };
+    const center = { x: paper.width * 0.5, y: paper.height * 0.9 - 3 }; // -3 to compensate for the baseline width
 
     const length = end.x - start.x;
     const innerArcRadius = length * 0.05;
-    /**
-     * First we determin the space that is left between the inner arc and the end of the baseline
-     * then we divide that leftover space by the amount of acrs that need to be drawn
-     */
-    const spacing = (length / 2 - innerArcRadius) / arcs.length;
+    const spacing = (length / 2 - innerArcRadius) / arcs.length; // (space that is left between the inner arc and the end of the baseline) / (amount of arcs that need to be drawn)
     const maxAngle = 2 * Math.PI;
 
     /** baseline */
@@ -110,7 +164,7 @@ const draw = () => {
         const x = center.x + arcRadius * Math.cos(adjustedDistance);
         const y = center.y + arcRadius * Math.sin(adjustedDistance);
 
-        /** acr.travelDistance slowly grows from 0 to the value of Pi and then from 0 again. This jump to 0 is caught by the if statement*/
+        // acr.travelDistance slowly grows from 0 to the value of Pi and then from 0 again. This jump to 0 is caught by the if statement
         if (distance % Math.PI < arc.traveledDistance) {
             arc.highlightIntensity = whiteIntensity;
 
@@ -135,7 +189,7 @@ const draw = () => {
         pen.arc(x, y, length * 0.0065, 0, Math.PI * 2);
         pen.fill();
 
-        /** remember distance and decrease intensity */
+        /** remember distance & decrease intensity to achive fadeout*/
         arc.highlightIntensity = Math.max(0, arc.highlightIntensity - whiteIntensity / fadingFrames);
         arc.traveledDistance = distance % Math.PI;
     });
