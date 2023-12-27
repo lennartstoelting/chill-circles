@@ -1,5 +1,3 @@
-/* global variables */
-
 const gradientColorSampleRGB = [
     /* https://colordesigner.io/gradient-generator */
     [
@@ -27,52 +25,45 @@ const gradientColorSampleRGB = [
     ],
 ];
 
-const rgbArrayToString = (rgbArray) => {
-    return "rgb(" + rgbArray[0] + "," + rgbArray[1] + "," + rgbArray[2] + ")";
-};
-
-const colors = gradientColorSampleRGB[0];
-const WhiteIntensity = 20; // 0 (original color) to 20 (white)
-const fadeDuration = 20; // 1 (ein Frame weiß) to e.g. 40 (40 Frames fade oud) or more
-const audioURL = "https://ia800106.us.archive.org/13/items/24-piano-keys/"; // beginning of the piano notes URL
-const velocityEquation = (index) => (2 * Math.PI * (60 - index)) / 900; // 900s = 15min, until all circles realign
-let startTime = new Date().getTime();
-
 const paper = document.querySelector("#paper");
 pen = paper.getContext("2d");
 paper.onclick = () => {
     toggleFullscreen();
 };
 
-console.log(paper.clientWidth);
+let startTime = new Date().getTime();
 
-/* array of arcs with their color, key and velocity */
+const colors = gradientColorSampleRGB[0];
+const white = [255, 255, 255];
+const whiteIntensity = 20; // 0 (original color) to 20 (white)
+const fadingFrames = 20; // 1 (ein Frame weiß) to e.g. 40 (40 Frames fade oud) or more
+
 const arcs = colors.map((color, index) => {
     return {
         color: color,
         audio: new Audio(
-            audioURL +
-                "key" +
+            "https://ia800106.us.archive.org/13/items/24-piano-keys/key" +
                 Math.min(index + 1, 24)
                     .toString()
                     .padStart(2, "0") +
                 ".mp3"
         ),
-        velocity: velocityEquation(index),
-        rememberDistance: 0,
-        arcHighlightIntensity: 0, // zwischen 0 (Ursprungsfarbe) und 20 (weiß)
+        velocity: (2 * Math.PI * (60 - index)) / 900, // 900s = 15min, until all circles realign
+        traveledDistance: 0,
+        highlightIntensity: 0, // zwischen 0 (Ursprungsfarbe) und 20 (weiß)
     };
 });
 
-/** bei 0 ist einfach die komplette color da, bei 100 ist sehr viel weiß drinne */
-const addWhiteToRGB = (rgb, WhiteIntensity) => {
-    var white = [255, 255, 255];
+const addWhiteToRGB = (rgb, whiteIntensity) => {
     return white.map((colorWhite, index) => {
-        return Math.floor(((WhiteIntensity / 10) * colorWhite + rgb[index]) / (WhiteIntensity / 10 + 1));
+        return Math.floor(((whiteIntensity / 10) * colorWhite + rgb[index]) / (whiteIntensity / 10 + 1));
     });
 };
 
-/* main looping draw function */
+const rgbArrayToString = (rgbArray) => {
+    return "rgb(" + rgbArray[0] + "," + rgbArray[1] + "," + rgbArray[2] + ")";
+};
+
 const draw = () => {
     const currentTime = new Date().getTime();
     const elapsedTime = (currentTime - startTime) / 1000;
@@ -95,10 +86,9 @@ const draw = () => {
     const spacing = (length / 2 - innerArcRadius) / arcs.length;
     const maxAngle = 2 * Math.PI;
 
+    /** baseline */
     pen.strokeStyle = "white";
     pen.lineWidth = 6;
-
-    /** baseline */
     pen.beginPath();
     pen.moveTo(start.x, start.y);
     pen.lineTo(end.x, end.y);
@@ -120,11 +110,10 @@ const draw = () => {
         const x = center.x + arcRadius * Math.cos(adjustedDistance);
         const y = center.y + arcRadius * Math.sin(adjustedDistance);
 
-        if (distance % Math.PI < arc.rememberDistance) {
-            /** light up to white */
-            // ob dieser Wert 10 oder 100 ist ist relativ egal weil die Farbe allein ab 10 schon ziemlich weiß ist. Der Unterschied ist dann im Fadeout, da es bei 10 über 10 Frames geht und bei 100 über 100 Frames
-            arc.arcHighlightIntensity = WhiteIntensity;
-            /** audio */
+        /** acr.travelDistance slowly grows from 0 to the value of Pi and then from 0 again. This jump to 0 is caught by the if statement*/
+        if (distance % Math.PI < arc.traveledDistance) {
+            arc.highlightIntensity = whiteIntensity;
+
             if (document.visibilityState === "visible") {
                 arc.audio.playbackRate = 2.0;
                 window.playResult = arc.audio.play();
@@ -132,16 +121,11 @@ const draw = () => {
                     window.playResultError = e;
                 });
             }
-        } else {
-            /** fade back to original color */
-            arc.arcHighlightIntensity = Math.max(0, arc.arcHighlightIntensity - WhiteIntensity / fadeDuration);
         }
-
-        arc.rememberDistance = distance % Math.PI;
 
         /** colorful arcs */
         pen.beginPath();
-        pen.strokeStyle = rgbArrayToString(addWhiteToRGB(arc.color, arc.arcHighlightIntensity));
+        pen.strokeStyle = rgbArrayToString(addWhiteToRGB(arc.color, arc.highlightIntensity));
         pen.arc(center.x, center.y, arcRadius, Math.PI, Math.PI * 2);
         pen.stroke();
 
@@ -150,6 +134,10 @@ const draw = () => {
         pen.beginPath();
         pen.arc(x, y, length * 0.0065, 0, Math.PI * 2);
         pen.fill();
+
+        /** remember distance and decrease intensity */
+        arc.highlightIntensity = Math.max(0, arc.highlightIntensity - whiteIntensity / fadingFrames);
+        arc.traveledDistance = distance % Math.PI;
     });
 
     requestAnimationFrame(draw);
@@ -157,7 +145,6 @@ const draw = () => {
 
 draw();
 
-/* minor helper functions */
 let fullScreen = false;
 const toggleFullscreen = () => {
     if (fullScreen) {
@@ -184,7 +171,3 @@ const toggleFullscreen = () => {
         fullScreen = true;
     }
 };
-
-/** next steps
- * 2. maybe change keys or scale of notes (https://www.musictheory.net/lessons/21)
- */
