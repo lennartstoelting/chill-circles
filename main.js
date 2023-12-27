@@ -1,83 +1,39 @@
 /* global variables */
-const gradientColorSamples = [
-    /* https://colordesigner.io/gradient-generator */
-    [
-        "#fafa6e",
-        "#e1f470",
-        "#c9ee73",
-        "#b2e777",
-        "#9cdf7c",
-        "#86d780",
-        "#72cf85",
-        "#5ec688",
-        "#4abd8c",
-        "#37b38e",
-        "#23aa8f",
-        "#0ba08f",
-        "#00968e",
-        "#008c8b",
-        "#008288",
-        "#007882",
-        "#106e7c",
-        "#1b6474",
-        "#225b6c",
-        "#275162",
-        "#2a4858",
-    ],
-    [
-        "#D0E7F5",
-        "#D9E7F4",
-        "#D6E3F4",
-        "#BCDFF5",
-        "#B7D9F4",
-        "#C3D4F0",
-        "#9DC1F3",
-        "#9AA9F4",
-        "#8D83EF",
-        "#AE69F0",
-        "#D46FF1",
-        "#DB5AE7",
-        "#D911DA",
-        "#D601CB",
-        "#E713BF",
-        "#F24CAE",
-        "#FB79AB",
-        "#FFB6C1",
-        "#FED2CF",
-        "#FDDFD5",
-        "#FEDCD1",
-    ],
-];
 
 const gradientColorSampleRGB = [
-    [250, 250, 110],
-    [240, 241, 109],
-    [229, 232, 108],
-    [219, 223, 107],
-    [208, 214, 106],
-    [198, 206, 105],
-    [188, 197, 103],
-    [177, 188, 102],
-    [167, 179, 101],
-    [156, 170, 100],
-    [146, 161, 99],
-    [136, 152, 98],
-    [125, 143, 97],
-    [115, 134, 96],
-    [104, 125, 95],
-    [94, 117, 94],
-    [84, 108, 92],
-    [73, 99, 91],
-    [63, 90, 90],
-    [52, 81, 89],
-    [42, 72, 88],
+    /* https://colordesigner.io/gradient-generator */
+    [
+        [250, 250, 110],
+        [240, 241, 109],
+        [229, 232, 108],
+        [219, 223, 107],
+        [208, 214, 106],
+        [198, 206, 105],
+        [188, 197, 103],
+        [177, 188, 102],
+        [167, 179, 101],
+        [156, 170, 100],
+        [146, 161, 99],
+        [136, 152, 98],
+        [125, 143, 97],
+        [115, 134, 96],
+        [104, 125, 95],
+        [94, 117, 94],
+        [84, 108, 92],
+        [73, 99, 91],
+        [63, 90, 90],
+        [52, 81, 89],
+        [42, 72, 88],
+    ],
 ];
 
 const rgbArrayToString = (rgbArray) => {
     return "rgb(" + rgbArray[0] + "," + rgbArray[1] + "," + rgbArray[2] + ")";
 };
 
-const colors = gradientColorSampleRGB;
+const colors = gradientColorSampleRGB[0];
+const WhiteIntensity = 20; // 0 (original color) to 20 (white)
+const fadeDuration = 20; // 1 (ein Frame weiß) to e.g. 40 (40 Frames fade oud) or more
 const audioURL = "https://ia800106.us.archive.org/13/items/24-piano-keys/"; // beginning of the piano notes URL
 const velocityEquation = (index) => (2 * Math.PI * (60 - index)) / 900; // 900s = 15min, until all circles realign
 let startTime = new Date().getTime();
@@ -101,12 +57,20 @@ const arcs = colors.map((color, index) => {
                     .toString()
                     .padStart(2, "0") +
                 ".mp3"
-        ), //audio.play() zum Abspielen
+        ),
         velocity: velocityEquation(index),
         rememberDistance: 0,
-        arcHighlightIntensity: 0,
+        arcHighlightIntensity: 0, // zwischen 0 (Ursprungsfarbe) und 20 (weiß)
     };
 });
+
+/** bei 0 ist einfach die komplette color da, bei 100 ist sehr viel weiß drinne */
+const addWhiteToRGB = (rgb, WhiteIntensity) => {
+    var white = [255, 255, 255];
+    return white.map((colorWhite, index) => {
+        return Math.floor(((WhiteIntensity / 10) * colorWhite + rgb[index]) / (WhiteIntensity / 10 + 1));
+    });
+};
 
 /* main looping draw function */
 const draw = () => {
@@ -156,28 +120,28 @@ const draw = () => {
         const x = center.x + arcRadius * Math.cos(adjustedDistance);
         const y = center.y + arcRadius * Math.sin(adjustedDistance);
 
-        /** audio */
-        /**
-         * TODO:
-         * currently the circles are colored white for one frame and their original rgb color in the others
-         * the prefered way is to have it colored white and then fade back to the original color within the following 10 to 20 or so frames
-         *
-         * also, these nested ifs might be reorganised to be more readable and also just make more sense in general
-         */
-        if (document.visibilityState === "visible") {
-            if (distance % Math.PI < arc.rememberDistance) {
-                pen.strokeStyle = "white";
+        if (distance % Math.PI < arc.rememberDistance) {
+            /** light up to white */
+            // ob dieser Wert 10 oder 100 ist ist relativ egal weil die Farbe allein ab 10 schon ziemlich weiß ist. Der Unterschied ist dann im Fadeout, da es bei 10 über 10 Frames geht und bei 100 über 100 Frames
+            arc.arcHighlightIntensity = WhiteIntensity;
+            /** audio */
+            if (document.visibilityState === "visible") {
                 arc.audio.playbackRate = 2.0;
-                arc.audio.play();
-            } else {
-                pen.strokeStyle = rgbArrayToString(arc.color);
+                window.playResult = arc.audio.play();
+                playResult.catch((e) => {
+                    window.playResultError = e;
+                });
             }
+        } else {
+            /** fade back to original color */
+            arc.arcHighlightIntensity = Math.max(0, arc.arcHighlightIntensity - WhiteIntensity / fadeDuration);
         }
+
         arc.rememberDistance = distance % Math.PI;
 
         /** colorful arcs */
         pen.beginPath();
-        // pen.strokeStyle = rgbArrayToString(arc.color);
+        pen.strokeStyle = rgbArrayToString(addWhiteToRGB(arc.color, arc.arcHighlightIntensity));
         pen.arc(center.x, center.y, arcRadius, Math.PI, Math.PI * 2);
         pen.stroke();
 
@@ -222,6 +186,5 @@ const toggleFullscreen = () => {
 };
 
 /** next steps
- * 1. add audio at correct time
  * 2. maybe change keys or scale of notes (https://www.musictheory.net/lessons/21)
  */
