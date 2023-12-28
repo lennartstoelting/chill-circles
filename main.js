@@ -1,10 +1,11 @@
 /**
  * TODO:
  *
- * - switch gradients with keyboard press (maybe f for "Farbe")
+ * - switch gradients with keyboard press (maybe f for "Farbe") (done)
  * - add more gradients
  * - find more beautiful sound, piano sounds a little harsh
  * - the baseline is still very white and can clash with the tranquility of the rest of the picture (done)
+ * - make model prettier
  */
 
 const gradientColorSampleRGB = [
@@ -137,7 +138,7 @@ pen = paper.getContext("2d");
 //     toggleFullscreen();
 // };
 
-const startTime = new Date().getTime();
+var startTime = new Date().getTime();
 var soundMuted = false;
 
 var selectedGradient = 0;
@@ -267,7 +268,7 @@ const draw = () => {
     requestAnimationFrame(draw);
 };
 
-draw();
+// draw();
 
 let fullScreen = false;
 const toggleFullscreen = () => {
@@ -293,5 +294,33 @@ const toggleFullscreen = () => {
             paper.msRequestFullscreen();
         }
         fullScreen = true;
+    }
+};
+
+// Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+const startUpModal = () => {
+    modal.style.display = "block";
+};
+
+startUpModal();
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function () {
+    modal.style.display = "none";
+    startTime = new Date().getTime();
+    draw();
+};
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function (event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+        startTime = new Date().getTime();
+        draw();
     }
 };
