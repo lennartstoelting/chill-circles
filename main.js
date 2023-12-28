@@ -133,13 +133,15 @@ const gradientColorSampleRGB = [
 
 const paper = document.querySelector("#paper");
 pen = paper.getContext("2d");
-paper.onclick = () => {
-    toggleFullscreen();
-};
+// paper.onclick = () => {
+//     toggleFullscreen();
+// };
 
-let startTime = new Date().getTime();
+const startTime = new Date().getTime();
+var soundMuted = false;
 
-const colors = gradientColorSampleRGB[4];
+var selectedGradient = 0;
+var colors = gradientColorSampleRGB[selectedGradient];
 const white = [255, 255, 255];
 const whiteIntensity = 20; // 0 (original color) to 20 (white)
 const fadingFrames = 50; // 1 (ein Frame weiß) to e.g. 40 (40 Frames fade oud) or more
@@ -158,6 +160,24 @@ const arcs = colors.map((color, index) => {
         traveledDistance: 0,
         highlightIntensity: 0, // zwischen 0 (Ursprungsfarbe) und 20 (weiß)
     };
+});
+
+document.addEventListener("keydown", (event) => {
+    event.preventDefault();
+    switch (event.key) {
+        case "g":
+            colors = gradientColorSampleRGB[++selectedGradient % gradientColorSampleRGB.length];
+            arcs.forEach((arc, index) => {
+                arc.color = colors[index];
+            });
+            break;
+        case "f":
+            toggleFullscreen();
+            break;
+        case "m":
+            soundMuted = !soundMuted;
+            break;
+    }
 });
 
 const addWhiteToRGB = (rgb, whiteIntensity) => {
@@ -217,7 +237,7 @@ const draw = () => {
         if (distance % Math.PI < arc.traveledDistance) {
             arc.highlightIntensity = whiteIntensity;
 
-            if (document.visibilityState === "visible") {
+            if (document.visibilityState === "visible" && !soundMuted) {
                 arc.audio.playbackRate = 2.0;
                 window.playResult = arc.audio.play();
                 playResult.catch((e) => {
