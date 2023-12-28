@@ -236,9 +236,8 @@ const draw = () => {
 
         // acr.travelDistance slowly grows from 0 to the value of Pi and then from 0 again. This jump to 0 is caught by the if statement
         if (distance % Math.PI < arc.traveledDistance) {
-            arc.highlightIntensity = whiteIntensity;
-
             if (document.visibilityState === "visible" && !soundMuted) {
+                arc.highlightIntensity = whiteIntensity;
                 arc.audio.playbackRate = 2.0;
                 window.playResult = arc.audio.play();
                 playResult.catch((e) => {
