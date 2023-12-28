@@ -4,7 +4,7 @@
  * - switch gradients with keyboard press (maybe f for "Farbe")
  * - add more gradients
  * - find more beautiful sound, piano sounds a little harsh
- * - the baseline is still very white and can clash with the tranquility of the rest of the picture
+ * - the baseline is still very white and can clash with the tranquility of the rest of the picture (done)
  */
 
 const gradientColorSampleRGB = [
@@ -81,6 +81,54 @@ const gradientColorSampleRGB = [
         [255, 190, 112],
         [255, 195, 112],
     ],
+    // forest
+    [
+        [89, 62, 54],
+        [87, 65, 55],
+        [85, 68, 55],
+        [82, 71, 56],
+        [80, 73, 57],
+        [78, 76, 58],
+        [76, 79, 58],
+        [73, 82, 59],
+        [71, 85, 60],
+        [69, 88, 60],
+        [67, 91, 61],
+        [64, 93, 62],
+        [62, 96, 62],
+        [60, 99, 63],
+        [58, 102, 64],
+        [55, 105, 65],
+        [53, 108, 65],
+        [51, 110, 66],
+        [49, 113, 67],
+        [46, 116, 67],
+        [44, 119, 68],
+    ],
+    // dolphins
+    [
+        [78, 161, 177],
+        [85, 161, 171],
+        [91, 161, 165],
+        [98, 160, 159],
+        [105, 160, 152],
+        [111, 160, 146],
+        [118, 160, 140],
+        [125, 159, 134],
+        [131, 159, 128],
+        [138, 159, 122],
+        [145, 159, 116],
+        [151, 158, 109],
+        [158, 158, 103],
+        [164, 158, 97],
+        [171, 158, 91],
+        [178, 157, 85],
+        [184, 157, 79],
+        [191, 157, 72],
+        [198, 157, 66],
+        [204, 156, 60],
+        [211, 156, 54],
+    ],
 ];
 
 const paper = document.querySelector("#paper");
@@ -91,7 +139,7 @@ paper.onclick = () => {
 
 let startTime = new Date().getTime();
 
-const colors = gradientColorSampleRGB[2];
+const colors = gradientColorSampleRGB[4];
 const white = [255, 255, 255];
 const whiteIntensity = 20; // 0 (original color) to 20 (white)
 const fadingFrames = 50; // 1 (ein Frame weiß) to e.g. 40 (40 Frames fade oud) or more
@@ -137,12 +185,13 @@ const draw = () => {
 
     const length = end.x - start.x;
     const innerArcRadius = length * 0.05;
-    const spacing = (length / 2 - innerArcRadius) / arcs.length; // (space that is left between the inner arc and the end of the baseline) / (amount of arcs that need to be drawn)
+    const spacing = (length / 2 - innerArcRadius) / (arcs.length - 0.5); // (space that is left between the inner arc and the end of the baseline) / (amount of arcs that need to be drawn (minus 0.5 so the outer most is drwan closer to the edge))
     const maxAngle = 2 * Math.PI;
 
     /** baseline */
-    pen.strokeStyle = "white";
+    pen.strokeStyle = rgbArrayToString(colors[colors.length - 1]);
     pen.lineWidth = 6;
+    pen.lineCap = "round";
     pen.beginPath();
     pen.moveTo(start.x, start.y);
     pen.lineTo(end.x, end.y);
@@ -179,6 +228,7 @@ const draw = () => {
 
         /** colorful arcs */
         pen.beginPath();
+        pen.lineCap = "butt";
         pen.strokeStyle = rgbArrayToString(addWhiteToRGB(arc.color, arc.highlightIntensity));
         pen.arc(center.x, center.y, arcRadius, Math.PI, Math.PI * 2);
         pen.stroke();
