@@ -172,6 +172,12 @@ document.addEventListener("keydown", (event) => {
                 arc.color = colors[index];
             });
             break;
+        case "h":
+            colors = gradientColorSampleRGB[--selectedGradient % gradientColorSampleRGB.length];
+            arcs.forEach((arc, index) => {
+                arc.color = colors[index];
+            });
+            break;
         case "f":
             toggleFullscreen();
             break;
