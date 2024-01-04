@@ -6,10 +6,20 @@
  * - find more beautiful sound, piano sounds a little harsh
  * - the baseline is still very white and can clash with the tranquility of the rest of the picture (done)
  * - make model prettier
+ *
+ * better sounds:
+ * https://freesound.org/search/?f=grouping_pack:%2223108_Celesta%22&s=Date+added+(newest+first)&g=1
+ * https://freesound.org/search/?f=grouping_pack:%221142_Chimes%2C%20no%20delay%22&s=Date+added+(newest+first)&g=1
+ * https://freesound.org/search/?f=grouping_pack:%2212247_metallophone%22&s=Date+added+(newest+first)&g=1
+ *
+ * Da muss man etwas umständlich bei inspect sound in die Metadata des übergeordneten HTML Elements unter mp3 suchen,
+ * vielleicht werde ich da einfach die sounds vorher in einem array laden und dann einfach nur abrufen
  */
 
 const gradientColorSampleRGB = [
-    /* https://colordesigner.io/gradient-generator */
+    /* https://colordesigner.io/gradient-generator
+     * https://uigradients.com/#PaleWood
+     */
     // green-yellow-turquoise gradient
     [
         [250, 250, 110],
