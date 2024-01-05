@@ -2,10 +2,12 @@
  * TODO:
  *
  * - switch gradients with keyboard press (maybe f for "Farbe") (done)
- * - add more gradients
- * - find more beautiful sound, piano sounds a little harsh
+ * - find more beautiful sound, piano sounds a little harsh (done)
  * - the baseline is still very white and can clash with the tranquility of the rest of the picture (done)
- * - make modal prettier
+ *
+ * - add more gradients (2 more, if possible with more variation to the ones that already exist)
+ * - make modal prettier (different font, maybe a drop shadow, some layout tweaks potentially)
+ * - make a function that filters the sounds to contain only major keys (https://www.piano-keyboard-guide.com/piano-music-scales.html)
  *
  * better sounds:
  * https://freesound.org/search/?f=grouping_pack:%2223108_Celesta%22&s=Date+added+(newest+first)&g=1
@@ -13,13 +15,11 @@
  * https://freesound.org/search/?f=grouping_pack:%2212247_metallophone%22&s=Date+added+(newest+first)&g=1
  * https://freesound.org/people/Carlos_Vaquero/packs/9528/
  *
- * Da muss man etwas umständlich bei inspect sound in die Metadata des übergeordneten HTML Elements unter mp3 suchen,
- * vielleicht werde ich da einfach die sounds vorher in einem array laden und dann einfach nur abrufen
  */
 
 const gradientColorSampleRGB = [
     /* https://colordesigner.io/gradient-generator
-     * https://uigradients.com/#PaleWood
+     * https://uigradients.com
      */
     // green-yellow-turquoise gradient
     [
@@ -146,30 +146,30 @@ const gradientColorSampleRGB = [
 const soundSamplesURL = [
     // piano keys
     [
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key01.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key02.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key03.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key04.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key05.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key06.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key07.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key08.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key09.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key10.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key11.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key12.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key13.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key14.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key15.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key16.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key17.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key18.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key19.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key20.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key21.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key22.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key23.mp3",
-        "https://ia800106.us.archive.org/13/items/24-piano-keys/key24.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key01.mp3", // F3
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key02.mp3", // F#3
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key03.mp3", // G3
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key04.mp3", // G#3
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key05.mp3", // A3
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key06.mp3", // A#3
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key07.mp3", // B3
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key08.mp3", // C4
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key09.mp3", // C#4
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key10.mp3", // D4
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key11.mp3", // D#4
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key12.mp3", // E4
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key13.mp3", // F4
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key14.mp3", // F#4
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key15.mp3", // G4
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key16.mp3", // G#4
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key17.mp3", // A4
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key18.mp3", // A#4
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key19.mp3", // B4
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key20.mp3", // C5
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key21.mp3", // C#5
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key22.mp3", // D5
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key23.mp3", // D#5
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key24.mp3", // E5
     ],
     // celesta keys
     [
@@ -236,6 +236,9 @@ var soundMuted = false;
 
 var selectedGradient = 0;
 var colors = gradientColorSampleRGB[selectedGradient];
+var selectedSound = 1;
+var sounds = soundSamplesURL[selectedSound];
+
 const white = [255, 255, 255];
 const whiteIntensity = 20; // 0 (original color) to 20 (white)
 const fadingFrames = 50; // 1 (ein Frame weiß) to e.g. 40 (40 Frames fade oud) or more
@@ -243,7 +246,7 @@ const fadingFrames = 50; // 1 (ein Frame weiß) to e.g. 40 (40 Frames fade oud) 
 const arcs = colors.map((color, index) => {
     return {
         color: color,
-        audio: new Audio(soundSamplesURL[1][index + 8]),
+        audio: new Audio(sounds[index]),
         velocity: (2 * Math.PI * (60 - index)) / 900, // 900s = 15min, until all circles realign
         traveledDistance: 0,
         highlightIntensity: 0, // zwischen 0 (Ursprungsfarbe) und 20 (weiß)
