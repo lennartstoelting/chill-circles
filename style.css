@@ -34,7 +34,7 @@ canvas {
 }
 
 .modal-content {
-    background-image: linear-gradient(to bottom right, lightskyblue, blueviolet);
+    background-image: linear-gradient(to bottom right, rgb(0, 70, 110), rgb(245, 98, 25));
     /* background-color: lightskyblue; */
     margin: 15% auto; /* 15% from the top and centered */
     padding: 15px;

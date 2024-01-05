@@ -239,7 +239,7 @@ pen = paper.getContext("2d");
 var startTime = new Date().getTime();
 var soundMuted = false;
 
-var selectedGradient = 0;
+var selectedGradient = 1;
 var colors = gradientColorSampleRGB[selectedGradient];
 var selectedSound = 1;
 var sounds = majorScale(soundSamplesURL[selectedSound]);
