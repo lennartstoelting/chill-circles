@@ -7,7 +7,7 @@
  *
  * - add more gradients (2 more, if possible with more variation to the ones that already exist)
  * - make modal prettier (different font, maybe a drop shadow, some layout tweaks potentially)
- * - make a function that filters the sounds to contain only major keys (https://www.piano-keyboard-guide.com/piano-music-scales.html)
+ * - make a function that filters the sounds to contain only major keys (https://www.piano-keyboard-guide.com/piano-music-scales.html) (done)
  *
  * better sounds:
  * https://freesound.org/search/?f=grouping_pack:%2223108_Celesta%22&s=Date+added+(newest+first)&g=1
@@ -44,6 +44,7 @@ const gradientColorSampleRGB = [
         [63, 90, 90],
         [52, 81, 89],
         [42, 72, 88],
+        [32, 63, 87],
     ],
     // sunset gradient
     [
@@ -68,6 +69,7 @@ const gradientColorSampleRGB = [
         [34, 74, 98],
         [23, 72, 102],
         [11, 71, 106],
+        [0, 70, 110],
     ],
     // sweet morning gradient
     [
@@ -92,6 +94,7 @@ const gradientColorSampleRGB = [
         [255, 185, 112],
         [255, 190, 112],
         [255, 195, 112],
+        [255, 200, 112],
     ],
     // forest
     [
@@ -116,6 +119,7 @@ const gradientColorSampleRGB = [
         [49, 113, 67],
         [46, 116, 67],
         [44, 119, 68],
+        [42, 122, 69],
     ],
     // dolphins
     [
@@ -140,6 +144,7 @@ const gradientColorSampleRGB = [
         [198, 157, 66],
         [204, 156, 60],
         [211, 156, 54],
+        [217, 156, 48],
     ],
 ];
 
@@ -237,7 +242,7 @@ var soundMuted = false;
 var selectedGradient = 0;
 var colors = gradientColorSampleRGB[selectedGradient];
 var selectedSound = 1;
-var sounds = soundSamplesURL[selectedSound];
+var sounds = majorScale(soundSamplesURL[selectedSound]);
 
 const white = [255, 255, 255];
 const whiteIntensity = 20; // 0 (original color) to 20 (white)
@@ -286,6 +291,17 @@ const addWhiteToRGB = (rgb, whiteIntensity) => {
 const rgbArrayToString = (rgbArray) => {
     return "rgb(" + rgbArray[0] + "," + rgbArray[1] + "," + rgbArray[2] + ")";
 };
+
+function majorScale(sounds) {
+    const majorScale = [true, false, true, false, true, true, false, true, false, true, false, true];
+    const majorScaleSounds = [];
+    for (let i = 0; i < sounds.length; i++) {
+        if (majorScale[i % 12]) {
+            majorScaleSounds.push(sounds[i]);
+        }
+    }
+    return majorScaleSounds;
+}
 
 const draw = () => {
     const currentTime = new Date().getTime();
