@@ -5,12 +5,13 @@
  * - add more gradients
  * - find more beautiful sound, piano sounds a little harsh
  * - the baseline is still very white and can clash with the tranquility of the rest of the picture (done)
- * - make model prettier
+ * - make modal prettier
  *
  * better sounds:
  * https://freesound.org/search/?f=grouping_pack:%2223108_Celesta%22&s=Date+added+(newest+first)&g=1
  * https://freesound.org/search/?f=grouping_pack:%221142_Chimes%2C%20no%20delay%22&s=Date+added+(newest+first)&g=1
  * https://freesound.org/search/?f=grouping_pack:%2212247_metallophone%22&s=Date+added+(newest+first)&g=1
+ * https://freesound.org/people/Carlos_Vaquero/packs/9528/
  *
  * Da muss man etwas umständlich bei inspect sound in die Metadata des übergeordneten HTML Elements unter mp3 suchen,
  * vielleicht werde ich da einfach die sounds vorher in einem array laden und dann einfach nur abrufen
@@ -142,11 +143,93 @@ const gradientColorSampleRGB = [
     ],
 ];
 
+const soundSamplesURL = [
+    // piano keys
+    [
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key01.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key02.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key03.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key04.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key05.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key06.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key07.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key08.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key09.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key10.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key11.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key12.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key13.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key14.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key15.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key16.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key17.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key18.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key19.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key20.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key21.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key22.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key23.mp3",
+        "https://ia800106.us.archive.org/13/items/24-piano-keys/key24.mp3",
+    ],
+    // celesta keys
+    [
+        /**
+         * randomly off key
+         * "https://cdn.freesound.org/previews/410/410655_394391-lq.mp3", // G2
+         * "https://cdn.freesound.org/previews/410/410666_394391-lq.mp3", // G#2
+         * "https://cdn.freesound.org/previews/410/410659_394391-lq.mp3", // A2
+         * "https://cdn.freesound.org/previews/410/410678_394391-lq.mp3", // A#2
+         * "https://cdn.freesound.org/previews/410/410663_394391-lq.mp3", // B2
+         */
+        "https://cdn.freesound.org/previews/410/410645_394391-lq.mp3", // C3
+        "https://cdn.freesound.org/previews/410/410665_394391-lq.mp3", // C#3
+        "https://cdn.freesound.org/previews/410/410634_394391-lq.mp3", // D3
+        "https://cdn.freesound.org/previews/410/410642_394391-lq.mp3", // D#3
+        "https://cdn.freesound.org/previews/410/410630_394391-lq.mp3", // E3
+        "https://cdn.freesound.org/previews/410/410670_394391-lq.mp3", // F3
+        "https://cdn.freesound.org/previews/410/410638_394391-lq.mp3", // F#3
+        "https://cdn.freesound.org/previews/410/410652_394391-lq.mp3", // G3
+        "https://cdn.freesound.org/previews/410/410675_394391-lq.mp3", // G#3
+        "https://cdn.freesound.org/previews/410/410656_394391-lq.mp3", // A3
+        "https://cdn.freesound.org/previews/410/410677_394391-lq.mp3", // A#3
+        "https://cdn.freesound.org/previews/410/410660_394391-lq.mp3", // B3
+        "https://cdn.freesound.org/previews/410/410641_394391-lq.mp3", // C4
+        "https://cdn.freesound.org/previews/413/413761_394391-lq.mp3", // C#4
+        "https://cdn.freesound.org/previews/410/410635_394391-lq.mp3", // D4
+        "https://cdn.freesound.org/previews/410/410648_394391-lq.mp3", // D#4
+        "https://cdn.freesound.org/previews/410/410631_394391-lq.mp3", // E4
+        "https://cdn.freesound.org/previews/410/410669_394391-lq.mp3", // F4
+        "https://cdn.freesound.org/previews/410/410673_394391-lq.mp3", // F#4
+        "https://cdn.freesound.org/previews/410/410653_394391-lq.mp3", // G4
+        "https://cdn.freesound.org/previews/410/410674_394391-lq.mp3", // G#4
+        "https://cdn.freesound.org/previews/410/410657_394391-lq.mp3", // A4
+        "https://cdn.freesound.org/previews/410/410676_394391-lq.mp3", // A#4
+        "https://cdn.freesound.org/previews/410/410661_394391-lq.mp3", // B4
+        "https://cdn.freesound.org/previews/410/410640_394391-lq.mp3", // C5
+        "https://cdn.freesound.org/previews/410/410644_394391-lq.mp3", // C#5
+        "https://cdn.freesound.org/previews/410/410636_394391-lq.mp3", // D5
+        "https://cdn.freesound.org/previews/410/410647_394391-lq.mp3", // D#5
+        "https://cdn.freesound.org/previews/410/410632_394391-lq.mp3", // E5
+        "https://cdn.freesound.org/previews/410/410668_394391-lq.mp3", // F5
+        "https://cdn.freesound.org/previews/410/410672_394391-lq.mp3", // F#5
+        "https://cdn.freesound.org/previews/410/410649_394391-lq.mp3", // G5
+        "https://cdn.freesound.org/previews/410/410654_394391-lq.mp3", // G#5
+        "https://cdn.freesound.org/previews/410/410662_394391-lq.mp3", // A5
+        "https://cdn.freesound.org/previews/410/410658_394391-lq.mp3", // A#5
+        "https://cdn.freesound.org/previews/410/410664_394391-lq.mp3", // B5
+        "https://cdn.freesound.org/previews/410/410643_394391-lq.mp3", // C6
+        "https://cdn.freesound.org/previews/410/410646_394391-lq.mp3", // C#6
+        "https://cdn.freesound.org/previews/410/410629_394391-lq.mp3", // D6
+        "https://cdn.freesound.org/previews/410/410633_394391-lq.mp3", // D#6
+        "https://cdn.freesound.org/previews/410/410637_394391-lq.mp3", // E6
+        "https://cdn.freesound.org/previews/410/410667_394391-lq.mp3", // F6
+        "https://cdn.freesound.org/previews/410/410671_394391-lq.mp3", // F#6
+        "https://cdn.freesound.org/previews/410/410651_394391-lq.mp3", // G6
+    ],
+];
+
 const paper = document.querySelector("#paper");
 pen = paper.getContext("2d");
-// paper.onclick = () => {
-//     toggleFullscreen();
-// };
 
 var startTime = new Date().getTime();
 var soundMuted = false;
@@ -160,13 +243,7 @@ const fadingFrames = 50; // 1 (ein Frame weiß) to e.g. 40 (40 Frames fade oud) 
 const arcs = colors.map((color, index) => {
     return {
         color: color,
-        audio: new Audio(
-            "https://ia800106.us.archive.org/13/items/24-piano-keys/key" +
-                Math.min(index + 1, 24)
-                    .toString()
-                    .padStart(2, "0") +
-                ".mp3"
-        ),
+        audio: new Audio(soundSamplesURL[1][index + 8]),
         velocity: (2 * Math.PI * (60 - index)) / 900, // 900s = 15min, until all circles realign
         traveledDistance: 0,
         highlightIntensity: 0, // zwischen 0 (Ursprungsfarbe) und 20 (weiß)
