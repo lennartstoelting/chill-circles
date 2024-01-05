@@ -33,7 +33,6 @@ canvas {
     background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
 
-/* Modal Content/Box */
 .modal-content {
     background-color: lightgray;
     margin: 15% auto; /* 15% from the top and centered */
@@ -43,14 +42,12 @@ canvas {
     width: 80%; /* Could be more or less, depending on screen size */
 }
 
-/* Modal Header */
 .modal-header {
     padding: 20px 16px;
     background-color: lightgrey;
     color: black;
 }
 
-/* Modal Body */
 .modal-body {
     padding: 10px 16px;
 }
@@ -74,7 +71,6 @@ h3 {
     cursor: pointer;
 }
 
-/* Add Animation */
 @keyframes animatetop {
     from {
         top: -300px;
